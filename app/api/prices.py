@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, Query
 from sqlalchemy.ext.asyncio import AsyncSession
 from app.db.session import get_session
 from app.services.price_service import PriceService
@@ -6,8 +6,13 @@ from app.services.price_service import PriceService
 router = APIRouter(prefix="/prices", tags=["prices"])
 
 @router.get("/all")
-async def get_all_prices(ticker: str, session: AsyncSession = Depends(get_session)):
-    return await PriceService.get_all(session, ticker)
+async def get_all_prices(
+    ticker: str = Query(..., description="Currency ticker, e.g. BTC or ETH")
+):
+    return {
+        "ticker": ticker,
+        "data": []
+    }
 
 @router.get("/latest")
 async def get_latest_price(ticker: str, session: AsyncSession = Depends(get_session)):
